@@ -1,0 +1,95 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: "Kumbh Sans", sans-serif;
+}
+
+.wrapper {
+  margin: 0 auto;
+  max-width: 1400px;
+  width: 100%;
+}
+
+nav {
+  top: 0;
+  width: 100%;
+  position: fixed;
+  height: 80px;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.box {
+  display: flex;
+  justify-content: space-between;
+  padding: 2em 3em;
+}
+.box .fav-btn, .box .input-box .search-btn {
+  padding: 0.5em 1em;
+  font-weight: 600;
+  background: none;
+  color: #f8f8ff;
+  font-size: 1.6rem;
+  cursor: pointer;
+  border: 1px solid #f8f8ff;
+  transition: color 0.4s, background-color 0.4s;
+}
+.box .fav-btn:hover, .box .input-box .search-btn:hover {
+  color: black;
+  background-color: #f8f8ff;
+}
+.box .input-box {
+  position: relative;
+}
+.box .input-box input {
+  width: 300px;
+  padding: 0.5em;
+  font-size: 1.6rem;
+  background: none;
+  border: 1px solid #f8f8ff;
+  color: #f8f8ff;
+}
+.box .input-box .search-btn {
+  position: absolute;
+  right: 0;
+  padding: 0.52em 1em;
+}
+
+.main .title {
+  padding: 7em 0 2em 0em;
+  font-size: 2.6rem;
+  text-align: center;
+}
+.main .img-box {
+  display: flex;
+  justify-content: center;
+}
+.main .img-box .one, .main .img-box .three, .main .img-box .two {
+  margin: 0 1em;
+  width: 250px;
+  height: 150px;
+  border: 1px solid black;
+  background-image: url("/img/imdb.png");
+  background-size: cover;
+  background-position: center;
+}
+.main .img-box .two {
+  background-image: url("/../img/RT_.jpg");
+}
+.main .img-box .three {
+  background-image: url("/../img/meta.png");
+  background-size: contain;
+}
+
+@media (max-width: 500px) {
+  html {
+    font-size: 50%;
+  }
+}/*# sourceMappingURL=style.css.map */
