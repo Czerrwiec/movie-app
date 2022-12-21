@@ -20,10 +20,10 @@
     <nav class="navbar">
         <div class="wrapper">
             <div class="box">
-                <button class="fav-btn">List To Watch</button>
+                <button class="fav-btn" data-bind-js>List To Watch</button>
                 <div class="input-box">
-                    <input type="text">
-                    <button class="search-btn">search</button>
+                    <input type="text" class="search-input" data-bind-js>
+                    <button class="search-btn" data-bind-js>search</button>
                 </div>
             </div>
         </div>
@@ -33,17 +33,58 @@
     <section class="main">
         <div class="wrapper">
 
-            <div class="movie-box">
-
+            <div class="title-box" data-bind-js>
                 <p class="title">Search for movies and check the rating in the most popular portals:</p>
                 <div class="img-box">
                     <div class="one"></div>
                     <div class="two"></div>
                     <div class="three"></div>
                 </div>
+            </div>
 
 
-                
+
+            <div class="movie-box" data-bind-js>
+
+                <!-- <div class="movie-card" data-bind-js>
+                    <h3>Title: </h3>
+                    <p>Year: </p>
+                    <i class="fa-regular fa-heart"></i>
+                    <div class="shadow"></div>
+                </div> -->
+
+                <div class="movie-details-box">
+                    <img src="https://m.media-amazon.com/images/M/MV5BOTY4YjI2N2MtYmFlMC00ZjcyLTg3YjEtMDQyM2ZjYzQ5YWFkXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg"
+                        alt="">
+                    <div class="details">
+                        <h2>title title title</h2>
+                        <p>Lorem ipsum dolor sit.</p>
+                        <p>Lorem ipsum dolor sit.</p>
+                        <p>Lorem ipsum dolor sit </p>
+                        <p>Lorem, ipsum dolor.</p>
+                        <p>Lorem, ipsum.</p>
+                        <p>Lorem ipsum dolor sit amet</p>
+                        <p>Lorem</p>
+                        <p class="info-text">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odit deleniti
+                            autem tempora eveniet! Lorem, ipsum dolor sit amet consectetur adipisicing.</p>
+                        <div class="rating-details">
+                            <div class="rating-box">
+                                <img src="/img/imdb2.png" alt="">
+                                <p>7.6/10</p>
+                            </div>
+                            <div class="rating-box">
+                                <img src="/img/RTlogo.png" alt="">
+                                <p>77%</p>
+                            </div>
+                            <div class="rating-box">
+                                <img src="/img/metacriticLogo.png" alt="">
+                                <p>55/100</p>
+                            </div>
+                        </div>
+                        <button class="details-btn" data-bind-js>close</button>
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+                </div>
 
 
             </div>
@@ -52,7 +93,7 @@
     </section>
 
 
-    <script src="./js/script.js"></script>
+    <script type="module" src="./js/script.js"></script>
 </body>
 
 </html>

@@ -1,28 +1,19 @@
-const image = document.querySelector('.image');
 
-const getMovieData = () => {
-	fetch('http://www.omdbapi.com/?apikey=929e2fc7&type=movie&s=The Lost City')
+export const getMovieDataByName = (key) => {
+	return fetch(`http://www.omdbapi.com/?apikey=929e2fc7&type=movie&s=${key}`)
 		.then((response) => response.json())
-		.then((response) => console.log(response
-            ))
-		.catch((err) => console.error(err));
 };
 
 
-const getMovieById = () => {
-    fetch('http://www.omdbapi.com/?apikey=929e2fc7&type=movie&i=tt13320622')
+export const getMovieInfo = (id) => {
+   return fetch(`http://www.omdbapi.com/?apikey=929e2fc7&type=movie&i=${id}`)
 		.then((response) => response.json())
-		.then((response) => console.log(response))
-		.catch((err) => console.error(err));
 }
 
 
-const getMovieImg = () => {
-	fetch('http://img.omdbapi.com/?apikey=929e2fc7&i=tt1877830')
-		// .then((response) => response.json())
-		.then((response) => (image.src = response.url));
-	// .catch((err) => console.error(err));
-};
-
-getMovieData()
-getMovieById()
+// const getMovieImg = () => {
+// 	return fetch('http://img.omdbapi.com/?apikey=929e2fc7&i=tt1772240')
+// 		// .then((response) => response.json())
+// 		.then((response) => (image.src = response.url));
+// 	// .catch((err) => console.error(err));
+// };
