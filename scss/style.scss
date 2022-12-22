@@ -165,17 +165,16 @@ nav {
 
 	.movie-details-box {
 		display: none;
-		display: flex;
-		position: absolute;
+		position: fixed;
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
 		width: 70%;
 		max-width: 1000px;
-		// border: 2px solid black;
 		box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
-		z-index: 120;
-		img {
+		z-index: 220;
+		min-height: 400px;
+		.poster {
 			opacity: 0.98;
 		}
 
@@ -191,10 +190,11 @@ nav {
 			}
 			p {
 				font-size: 1.6rem;
-				line-height: 22px;
+				line-height: 23px;
 			}
 			.info-text {
 				padding: 0.8em 0 0 0;
+				line-height: 20px;
 			}
 			
 			i {
@@ -227,21 +227,89 @@ nav {
 
 			img {
 				height: 70px;
-				margin: 1em 0.5em;
+				margin: 0.4em 0;
 			}
 			.rating-details {
+				position: absolute;
+				bottom: 0;
 				display: flex;
+				padding: 2em;
 				.rating-box {
+					padding: 1em;
 					display: flex;
 					flex-direction: column;
 					text-align: center;
+					.rating {
+						font-size: 1.6rem;
+					}
 				}
 			}
 		}
 	}
 }
+.overlay {
+	position: fixed;
+	display: none;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(42, 42, 42, 0.75);
+	z-index: 200;
+}
 
 //MEDIA
+
+
+
+@media (max-width: 1080px) {
+	.main .movie-details-box {
+		position: fixed;
+		top: 50%;
+		width: 95%;
+	
+	}
+	
+	.main .movie-details-box .details .rating-details {
+		position: absolute;
+		bottom: 0;
+		display: flex;
+		padding: 0.2em;
+	}
+
+	.main .movie-details-box .details .rating-details .rating-box {
+		padding: .8em;
+		margin-top: 1em;
+		display: flex;
+		flex-direction: column;
+		text-align: center;
+	}
+
+	.main .movie-details-box .details .rating-details {
+		position: relative;
+		padding: 0.2em;
+	}
+	.main .movie-details-box .details img {
+		height: 60px;
+		margin: 0.4em 0;
+	}
+
+	.main .movie-details-box .details .details-btn {
+		position: relative;
+		align-self: flex-end;
+		margin-top: 2em;
+		padding: 0.5em 1em;
+	}
+
+	.main .movie-details-box .details {
+		display: flex;
+		flex-direction: column;
+		width: 70%;
+		background-color: #e3e3f2;
+		opacity: 0.98;
+		padding: 2em;
+	}
+}
 
 @media (max-width: 500px) {
 	html {
@@ -266,5 +334,36 @@ nav {
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+	}
+
+	.main .movie-card {
+		margin: 0.4em;
+		height: 270px;
+		width: 170px;
+	}
+
+	.main .shadow {
+		height: 33%;
+		width: 100%;
+	}
+
+
+	.main .movie-details-box {
+		position: fixed;
+		flex-direction: column;
+		top: 55%;	
+	}
+
+	.main .movie-details-box .poster {
+		display: none;
+	}
+
+	.main .movie-details-box .details {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		background-color: #e3e3f2;
+		opacity: 0.98;
+		padding: 2em;
 	}
 }

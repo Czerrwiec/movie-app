@@ -3,6 +3,7 @@ import { getMovieDataByName, getMovieInfo } from './requests.js';
 class MovieApp {
 	constructor() {
 		this.elements = {};
+		this.favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 		this.initApp();
 	}
 
@@ -17,126 +18,189 @@ class MovieApp {
 		for (const element of elements) {
 			this.elements[element.classList[0].replace('-', '_')] = element;
 		}
+		console.log(this.elements);
 	};
 
 	setupListeners = () => {
 		this.elements.search_btn.addEventListener('click', this.searchForMovies);
-		this.elements.search_input.addEventListener('keydown', this.searchForMovies)
+		this.elements.search_input.addEventListener(
+			'keydown',
+			this.searchForMovies
+		);
+		this.elements.movie_box.addEventListener('click', (e) => {
+			console.log(e.target);
+
+			if (e.target.classList.contains('fa-regular')) {
+				e.target.classList.remove('fa-regular')
+				e.target.classList.add('fa-solid')
+				e.target.style.display = 'block'
+			} else if (e.target.classList.contains('fa-solid')) {
+				e.target.classList.remove('fa-solid')
+				e.target.classList.add('fa-regular')
+				e.target.style.display = ''
+			}
+			
+		})
+
 	};
 
 	searchForMovies = (input) => {
 		if (event.type === 'click' || event.key === 'Enter') {
 			input = this.elements.search_input.value;
-			getMovieDataByName(input).then(data => this.renderCards(data));
+			this.elements.movie_box.innerHTML = '';
+			getMovieDataByName(input).then((data) => this.renderCards(data));
+			this.elements.search_input.value = '';
 		}
 	};
 
 	renderCards = (data) => {
-		// console.log(data.Search);
 		for (const item of data.Search) {
-			this.createMovieCard(item)
+			this.createMovieCard(item);
 		}
-	}
+	};
 
 	createMovieCard = (item) => {
 		// console.log(item);
 
-		let title = item.Title
-		let poster = item.Poster
+		let title = item.Title;
+		let poster = item.Poster;
 
-		if (title.length > 60) {
-			title = item.Title.substring(0, 60) + '...'
-		} else {
-			title = item.Title
-		}
-		if (poster == "N/A") {
-			poster = 'https://via.placeholder.com/210x295'
-		} else {
-			poster = item.Poster
-		}
-
+		if (title.length > 60) title = item.Title.substring(0, 60) + '...';
+		if (poster == 'N/A') poster = 'https://via.placeholder.com/210x295';
 
 		const divCard = this.createDOMElem('div', 'movie-card');
-		const heading = this.createDOMElem('h3', null, title)
-		const paragraph = this.createDOMElem('p', null, item.Year)
-		const icon = this.createDOMElem('i', 'fa-regular fa-heart')
-		const shadow = this.createDOMElem('div', 'shadow')
+		const heading = this.createDOMElem('h3', null, title);
+		const paragraph = this.createDOMElem('p', null, item.Year);
+		const icon = this.createDOMElem('i', 'fa-regular fa-heart');
+		const shadow = this.createDOMElem('div', 'shadow');
 
+		shadow.append(heading, paragraph);
 
-		shadow.append(heading, paragraph)
+		divCard.append(icon, shadow);
+		divCard.dataset.id = item.imdbID;
+		divCard.style.backgroundImage = `url(${poster})`;
 
-		divCard.append(icon, shadow)
-		divCard.dataset.id = item.imdbID
-		divCard.style.backgroundImage = `url(${poster})`
+		this.elements.title_box.innerHTML = '';
+		this.elements.movie_box.append(divCard);
 
-		this.elements.title_box.innerHTML = ''
-		this.elements.movie_box.append(divCard)
-
-		divCard.addEventListener('click', this.openMovieSecondView)
-
-	}
+		divCard.addEventListener('click', this.openMovieSecondView);
+	};
 
 	createDOMElem = (tagName, className, textContent, src) => {
-		const tag = document.createElement(tagName)
-		tag.classList = className
+		const tag = document.createElement(tagName);
+		tag.classList = className;
 
 		if (textContent) {
-			tag.textContent = textContent
+			tag.textContent = textContent;
 		}
 		if (src) {
-			tag.src = src
+			tag.src = src;
 		}
-		return tag
-	}
-
+		return tag;
+	};
 
 	openMovieSecondView = (event) => {
-		let movieId
+		let movieId;
+
 		if (event.target.dataset.id) {
-			movieId = event.target.dataset.id
-		} else if (!event.target.dataset.id && !event.target.classList.contains('fa-heart')){
+			movieId = event.target.dataset.id;
+		} else if (
+			!event.target.dataset.id &&
+			!event.target.classList.contains('fa-heart')
+		) {
 			movieId = event.target.closest('.movie-card').dataset.id;
 		}
 
-		getMovieInfo(movieId).then(info => {
-			console.log(info.Ratings);
+		getMovieInfo(movieId).then((info) => {
+			console.log(info);
 
-			// <div class="movie-details-box">
-			// 	<img src="" alt="">
-			// 	<div class="details">
-			// 		<h2>title title title</h2>
-			// 		<p>Lorem ipsum dolor sit.</p>
-			// 		<p>Lorem ipsum dolor sit.</p>
-			// 		<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt a delectus cum repudiandae. Dignissimos sapiente nemo vero quam voluptas aperiam?</p>
-			// 		<i class="fa-solid fa-heart"></i>
-			// 	</div>
-			// </div>
+			let imdbRating
+			let rtRating
+			let metaRating
+			let posterImage = info.Poster
 
-			const detailsDiv = this.createDOMElem('div', "movie-details-box")
-			const img = this.createDOMElem('img', null, null, info.Poster)
-			const detailsText = this.createDOMElem('div', 'details')
-			const title = this.createDOMElem('h2', null, info.Title)
-			const year = this.createDOMElem('p', null, `Year: ${info.Year}`)
-			const actors = this.createDOMElem('p', null, `Actors: ${info.Actors}`)
-			const genres = this.createDOMElem('p', null, `Genres: ${info.Genre}`)
-			const director = this.createDOMElem('p', null, `Director: ${info.Director}`)
-			const runtime = this.createDOMElem('p', null, `Runtime: ${info.Runtime}`)
-			const country = this.createDOMElem('p', null, `Country: ${info.Country}`)
-			const infoText = this.createDOMElem('p', 'info-text', `${info.Plot}`)
+			try {
+				imdbRating = info.Ratings[0].Value;
+			} catch (e) {
+				imdbRating = 'no rating'
+			}
+			try {
+				rtRating = info.Ratings[1].Value;
+			} catch (e) {
+				rtRating = 'no rating'
+			}
+			try {
+				metaRating = info.Ratings[2].Value;
+			} catch (e) {
+				metaRating = 'no rating'
+			}
 
-
-			detailsText.append(title, year, actors, genres, director, runtime, country, infoText)
-			detailsDiv.append(img, detailsText)
-
-			detailsDiv.style.display = "flex"
-			this.elements.movie_box.append(detailsDiv)
+			if (posterImage == "N/A") posterImage = 'https://via.placeholder.com/350x550'
 
 
+			const detailsDiv = this.createDOMElem('div', 'movie-details-box');
+			const img = this.createDOMElem('img', 'poster', null, posterImage);
+			const detailsText = this.createDOMElem('div', 'details');
+			const title = this.createDOMElem('h2', null, info.Title);
+			const year = this.createDOMElem('p', null, `Year: ${info.Year}`);
+			const actors = this.createDOMElem('p', null, `Actors: ${info.Actors}`);
+			const genres = this.createDOMElem('p', null, `Genres: ${info.Genre}`);
+			const director = this.createDOMElem('p', null, `Director: ${info.Director}`);
+			const runtime = this.createDOMElem('p', null, `Runtime: ${info.Runtime}`);
+			const country = this.createDOMElem('p', null, `Country: ${info.Country}`);
+			const infoText = this.createDOMElem('p', 'info-text', `${info.Plot}`);
+			const ratingDetailsDiv = this.createDOMElem('div', 'rating-details');
+			const closeBtn = this.createDOMElem('button', 'details-btn', 'close');
+			
+			const ratingBoxDivOne = this.createDOMElem('div', 'rating-box');
+			const ratingImgOne = this.createDOMElem('img', null, null, '/img/imdb2.png');
+			const ratingParagraphOne = this.createDOMElem('p', 'rating', imdbRating);
 
-		})
+			const ratingBoxDivTwo = this.createDOMElem('div', 'rating-box');
+			const ratingImgTwo = this.createDOMElem('img', null, null, '/img/RTlogo.png');
+			const ratingParagraphTwo = this.createDOMElem('p', 'rating', rtRating);
 
-	}
+			const ratingBoxDivThree = this.createDOMElem('div', 'rating-box');
+			const ratingImgThree = this.createDOMElem('img', null, null, '/img/metacriticLogo.png');
+			const ratingParagraphThree = this.createDOMElem('p', 'rating', metaRating);
 
+			ratingBoxDivOne.append(ratingImgOne, ratingParagraphOne);
+			ratingBoxDivTwo.append(ratingImgTwo, ratingParagraphTwo);
+			ratingBoxDivThree.append(ratingImgThree, ratingParagraphThree);
+
+			ratingDetailsDiv.append(
+				ratingBoxDivOne,
+				ratingBoxDivTwo,
+				ratingBoxDivThree
+			);
+
+			detailsText.append(
+				title,
+				year,
+				actors,
+				genres,
+				director,
+				runtime,
+				country,
+				infoText,
+				ratingDetailsDiv,
+				closeBtn
+			);
+			detailsDiv.append(img, detailsText);
+
+			detailsDiv.style.display = 'flex';
+			this.elements.movie_box.append(detailsDiv);
+			this.elements.overlay.style.display = 'block';
+			document.body.style.overflow = 'hidden';
+
+			const viewCloseBtn = document.querySelector('.details-btn');
+			viewCloseBtn.addEventListener('click', () => {
+				this.elements.movie_box.removeChild(this.elements.movie_box.lastChild);
+				this.elements.overlay.style.display = 'none';
+				document.body.style.overflow = '';
+			});
+		});
+	};
 }
 
 document.addEventListener('DOMContentLoaded', new MovieApp());
