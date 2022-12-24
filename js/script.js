@@ -18,7 +18,6 @@ class MovieApp {
 		for (const element of elements) {
 			this.elements[element.classList[0].replace('-', '_')] = element;
 		}
-		console.log(this.elements);
 	};
 
 	setupListeners = () => {
@@ -28,19 +27,28 @@ class MovieApp {
 			this.searchForMovies
 		);
 		this.elements.movie_box.addEventListener('click', (e) => {
-			console.log(e.target);
+
+			let id = e.target.closest('.movie-card').dataset.id
 
 			if (e.target.classList.contains('fa-regular')) {
 				e.target.classList.remove('fa-regular')
 				e.target.classList.add('fa-solid')
 				e.target.style.display = 'block'
+				this.favorites.push(id)
 			} else if (e.target.classList.contains('fa-solid')) {
 				e.target.classList.remove('fa-solid')
 				e.target.classList.add('fa-regular')
 				e.target.style.display = ''
+				for (let i = 0; i < this.favorites.length; i++) {
+					if (this.favorites[i] === id) {
+						this.favorites.splice(i, 1);
+					}
+				}
 			}
-			
+			localStorage.setItem('favorites', JSON.stringify(this.favorites));
 		})
+
+		this.elements.fav_btn.addEventListener('click', this.renderFavorites)
 
 	};
 
@@ -59,23 +67,37 @@ class MovieApp {
 		}
 	};
 
+	renderFavorites = (id) => {
+		this.elements.movie_box.innerHTML = ''
+		id = this.favorites
+
+		id.forEach(item => {
+			getMovieInfo(item).then(info => {
+				this.createMovieCard(info)
+			})
+		});
+	}
+
 	createMovieCard = (item) => {
-		// console.log(item);
 
 		let title = item.Title;
 		let poster = item.Poster;
+		let iconClass = 'fa-regular fa-heart'
 
+		if (this.favorites.includes(item.imdbID)) iconClass = 'fa-solid fa-heart'
 		if (title.length > 60) title = item.Title.substring(0, 60) + '...';
 		if (poster == 'N/A') poster = 'https://via.placeholder.com/210x295';
+
 
 		const divCard = this.createDOMElem('div', 'movie-card');
 		const heading = this.createDOMElem('h3', null, title);
 		const paragraph = this.createDOMElem('p', null, item.Year);
-		const icon = this.createDOMElem('i', 'fa-regular fa-heart');
+		const icon = this.createDOMElem('i', iconClass);
 		const shadow = this.createDOMElem('div', 'shadow');
 
-		shadow.append(heading, paragraph);
+		if (icon.classList.contains('fa-solid')) icon.style.display	= 'block';
 
+		shadow.append(heading, paragraph);
 		divCard.append(icon, shadow);
 		divCard.dataset.id = item.imdbID;
 		divCard.style.backgroundImage = `url(${poster})`;
@@ -112,7 +134,6 @@ class MovieApp {
 		}
 
 		getMovieInfo(movieId).then((info) => {
-			console.log(info);
 
 			let imdbRating
 			let rtRating
