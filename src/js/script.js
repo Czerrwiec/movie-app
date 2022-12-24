@@ -25,30 +25,9 @@ class MovieApp {
 		this.elements.search_input.addEventListener(
 			'keydown',
 			this.searchForMovies
-		);
-		this.elements.movie_box.addEventListener('click', (e) => {
-
-			let id = e.target.closest('.movie-card').dataset.id
-
-			if (e.target.classList.contains('fa-regular')) {
-				e.target.classList.remove('fa-regular')
-				e.target.classList.add('fa-solid')
-				e.target.style.display = 'block'
-				this.favorites.push(id)
-			} else if (e.target.classList.contains('fa-solid')) {
-				e.target.classList.remove('fa-solid')
-				e.target.classList.add('fa-regular')
-				e.target.style.display = ''
-				for (let i = 0; i < this.favorites.length; i++) {
-					if (this.favorites[i] === id) {
-						this.favorites.splice(i, 1);
-					}
-				}
-			}
-			localStorage.setItem('favorites', JSON.stringify(this.favorites));
-		})
-
-		this.elements.fav_btn.addEventListener('click', this.renderFavorites)
+		)
+		this.elements.movie_box.addEventListener('click', this.addToFavorites);
+		this.elements.fav_btn.addEventListener('click', this.renderFavorites);
 
 	};
 
@@ -67,27 +46,56 @@ class MovieApp {
 		}
 	};
 
-	renderFavorites = (id) => {
-		this.elements.movie_box.innerHTML = ''
-		id = this.favorites
+	addToFavorites = (e) => {
+		let id
 
-		id.forEach(item => {
-			getMovieInfo(item).then(info => {
-				this.createMovieCard(info)
-			})
+		if (e.target.dataset.id !== undefined) {
+			id = e.target.dataset.id
+		} else {
+			try {
+				id = e.target.closest('.movie-card').dataset.id
+			} catch (e) {
+				id = null
+			}
+		}
+
+		if (e.target.classList.contains('fa-regular')) {
+			e.target.classList.remove('fa-regular');
+			e.target.classList.add('fa-solid');
+			e.target.style.display = 'block';
+			this.favorites.push(id);
+		} else if (e.target.classList.contains('fa-solid')) {
+			e.target.classList.remove('fa-solid');
+			e.target.classList.add('fa-regular');
+			e.target.style.display = '';
+			for (let i = 0; i < this.favorites.length; i++) {
+				if (this.favorites[i] === id) {
+					this.favorites.splice(i, 1);
+				}
+			}
+		}
+		localStorage.setItem('favorites', JSON.stringify(this.favorites));
+	};
+
+	renderFavorites = (id) => {
+		this.elements.movie_box.innerHTML = '';
+		id = this.favorites;
+
+		id.forEach((item) => {
+			getMovieInfo(item).then((info) => {
+				this.createMovieCard(info);
+			});
 		});
-	}
+	};
 
 	createMovieCard = (item) => {
-
 		let title = item.Title;
 		let poster = item.Poster;
-		let iconClass = 'fa-regular fa-heart'
+		let iconClass = 'fa-regular fa-heart';
 
-		if (this.favorites.includes(item.imdbID)) iconClass = 'fa-solid fa-heart'
+		if (this.favorites.includes(item.imdbID)) iconClass = 'fa-solid fa-heart';
 		if (title.length > 60) title = item.Title.substring(0, 60) + '...';
 		if (poster == 'N/A') poster = 'https://via.placeholder.com/210x295';
-
 
 		const divCard = this.createDOMElem('div', 'movie-card');
 		const heading = this.createDOMElem('h3', null, title);
@@ -95,7 +103,7 @@ class MovieApp {
 		const icon = this.createDOMElem('i', iconClass);
 		const shadow = this.createDOMElem('div', 'shadow');
 
-		if (icon.classList.contains('fa-solid')) icon.style.display	= 'block';
+		if (icon.classList.contains('fa-solid')) icon.style.display = 'block';
 
 		shadow.append(heading, paragraph);
 		divCard.append(icon, shadow);
@@ -134,30 +142,32 @@ class MovieApp {
 		}
 
 		getMovieInfo(movieId).then((info) => {
+			let imdbRating;
+			let rtRating;
+			let metaRating;
+			let posterImage = info.Poster;
+			let iconClass = 'fa-regular fa-heart';
 
-			let imdbRating
-			let rtRating
-			let metaRating
-			let posterImage = info.Poster
+			if (this.favorites.includes(info.imdbID)) iconClass = 'fa-solid fa-heart';
 
 			try {
 				imdbRating = info.Ratings[0].Value;
 			} catch (e) {
-				imdbRating = 'no rating'
+				imdbRating = 'no rating';
 			}
 			try {
 				rtRating = info.Ratings[1].Value;
 			} catch (e) {
-				rtRating = 'no rating'
+				rtRating = 'no rating';
 			}
 			try {
 				metaRating = info.Ratings[2].Value;
 			} catch (e) {
-				metaRating = 'no rating'
+				metaRating = 'no rating';
 			}
 
-			if (posterImage == "N/A") posterImage = 'https://via.placeholder.com/350x550'
-
+			if (posterImage == 'N/A')
+				posterImage = 'https://via.placeholder.com/350x550';
 
 			const detailsDiv = this.createDOMElem('div', 'movie-details-box');
 			const img = this.createDOMElem('img', 'poster', null, posterImage);
@@ -166,24 +176,30 @@ class MovieApp {
 			const year = this.createDOMElem('p', null, `Year: ${info.Year}`);
 			const actors = this.createDOMElem('p', null, `Actors: ${info.Actors}`);
 			const genres = this.createDOMElem('p', null, `Genres: ${info.Genre}`);
-			const director = this.createDOMElem('p', null, `Director: ${info.Director}`);
+			const director = this.createDOMElem(
+				'p',
+				null,
+				`Director: ${info.Director}`
+			);
 			const runtime = this.createDOMElem('p', null, `Runtime: ${info.Runtime}`);
 			const country = this.createDOMElem('p', null, `Country: ${info.Country}`);
 			const infoText = this.createDOMElem('p', 'info-text', `${info.Plot}`);
 			const ratingDetailsDiv = this.createDOMElem('div', 'rating-details');
 			const closeBtn = this.createDOMElem('button', 'details-btn', 'close');
-			
+			const icon = this.createDOMElem('i', iconClass);
+
 			const ratingBoxDivOne = this.createDOMElem('div', 'rating-box');
-			const ratingImgOne = this.createDOMElem('img', null, null, '/img/imdb2.png');
+			const ratingImgOne = this.createDOMElem('img', null, null, '/dist/img/imdb2.png');
 			const ratingParagraphOne = this.createDOMElem('p', 'rating', imdbRating);
 
 			const ratingBoxDivTwo = this.createDOMElem('div', 'rating-box');
-			const ratingImgTwo = this.createDOMElem('img', null, null, '/img/RTlogo.png');
+			const ratingImgTwo = this.createDOMElem('img', null, null, '/dist/img/RTlogo.png');
 			const ratingParagraphTwo = this.createDOMElem('p', 'rating', rtRating);
 
 			const ratingBoxDivThree = this.createDOMElem('div', 'rating-box');
-			const ratingImgThree = this.createDOMElem('img', null, null, '/img/metacriticLogo.png');
+			const ratingImgThree = this.createDOMElem('img', null, null, '/dist/img/metacriticLogo.png');
 			const ratingParagraphThree = this.createDOMElem('p', 'rating', metaRating);
+			
 
 			ratingBoxDivOne.append(ratingImgOne, ratingParagraphOne);
 			ratingBoxDivTwo.append(ratingImgTwo, ratingParagraphTwo);
@@ -205,11 +221,13 @@ class MovieApp {
 				country,
 				infoText,
 				ratingDetailsDiv,
-				closeBtn
+				closeBtn,
+				icon
 			);
 			detailsDiv.append(img, detailsText);
 
 			detailsDiv.style.display = 'flex';
+			icon.dataset.id = info.imdbID
 			this.elements.movie_box.append(detailsDiv);
 			this.elements.overlay.style.display = 'block';
 			document.body.style.overflow = 'hidden';
@@ -220,7 +238,8 @@ class MovieApp {
 				this.elements.overlay.style.display = 'none';
 				document.body.style.overflow = '';
 			});
-		});
+			document.querySelector('.fa-heart').addEventListener('click', this.addToFavorites)
+		})
 	};
 }
 

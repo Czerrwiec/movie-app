@@ -84,19 +84,19 @@ nav {
 			width: 250px;
 			height: 150px;
 			border: 1px solid black;
-			background-image: url('/img/imdb.png');
+			background-image: url('/dist/img/imdb.png');
 			background-size: cover;
 			background-position: center;
 		}
 
 		.two {
 			@extend .one;
-			background-image: url('/../img/RT_.jpg');
+			background-image: url('/dist/img/RT_.jpg');
 		}
 
 		.three {
 			@extend .one;
-			background-image: url('/../img/meta.png');
+			background-image: url('/dist/img/meta.png');
 			background-size: contain;
 		}
 	}
@@ -165,6 +165,7 @@ nav {
 
 	.movie-details-box {
 		display: none;
+		// display: flex;
 		position: fixed;
 		top: 50%;
 		left: 50%;
@@ -204,6 +205,8 @@ nav {
 				top: 0;
 				font-size: 2rem;
 				color: rgb(200, 3, 3);
+				z-index: 300;
+				cursor: pointer;
 			}
 
 			.details-btn {
