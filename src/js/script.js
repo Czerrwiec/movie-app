@@ -35,14 +35,12 @@ class MovieApp {
 		if (event.type === 'click' || event.key === 'Enter') {
 			input = this.elements.search_input.value;
 			this.elements.movie_box.innerHTML = '';
-			getMovieDataByName(input).then((data) => this.renderCards(data));
+			getMovieDataByName(input).then((data) => {
+				for (const item of data.Search) {
+					this.createMovieCard(item)
+				}
+			});
 			this.elements.search_input.value = '';
-		}
-	};
-
-	renderCards = (data) => {
-		for (const item of data.Search) {
-			this.createMovieCard(item);
 		}
 	};
 
